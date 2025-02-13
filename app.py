@@ -6,7 +6,6 @@ Created on Wed Feb 12 14:02:22 2025
 """
 
 import pandas as pd
-import numpy as np
 import streamlit as st
 
 # Set pandas to display full text in columns
@@ -41,15 +40,21 @@ def main():
         ("Entailment", "Neutral", "Contradiction")
     )
 
-    # Load the dataset based on the selected choice
-    file_path = file_paths.get(dataset_choice)
-    df = load_dataset(file_path)
-
     # Initialize session state to keep track of the current row and DataFrame
     if 'current_row' not in st.session_state:
         st.session_state.current_row = 0
     if 'dataframe' not in st.session_state:
-        st.session_state.dataframe = df
+        st.session_state.dataframe = None
+    if 'dataset_choice' not in st.session_state:
+        st.session_state.dataset_choice = dataset_choice
+
+    # Reload dataset if the dataset choice changes
+    if st.session_state.dataset_choice != dataset_choice:
+        st.session_state.dataset_choice = dataset_choice
+        st.session_state.current_row = 0  # Reset to the first row
+        st.session_state.dataframe = load_dataset(file_paths.get(dataset_choice))
+    elif st.session_state.dataframe is None:
+        st.session_state.dataframe = load_dataset(file_paths.get(dataset_choice))
 
     # Display the current row's hypothesis and premise
     display_current_row(st.session_state.dataframe, st.session_state.current_row)
@@ -60,7 +65,7 @@ def main():
     # Input for user to add or edit a comment
     comment = st.text_area(
         "Add or edit a comment (or leave blank to skip):",
-        value="" if pd.notna(existing_comment) else ""
+        value=existing_comment if pd.notna(existing_comment) else ""
     )
 
     # Create two layout columns for the buttons
@@ -72,12 +77,14 @@ def main():
             if comment:
                 st.session_state.dataframe.loc[st.session_state.current_row, 'comm1'] = comment
                 # Save the updated DataFrame to the file
-                update_dataset(file_path, st.session_state.dataframe)
+                update_dataset(file_paths.get(dataset_choice), st.session_state.dataframe)
             # Move to the next row
             st.session_state.current_row += 1
             if st.session_state.current_row >= len(st.session_state.dataframe):
                 st.session_state.current_row = 0  # Loop back to the first row
                 st.info("Reached the end of the dataset. Looping back to the first row.")
+            # Force a rerun to reset the comment field for the new row
+            st.experimental_rerun()
 
     # Button to skip to the next row
     with skip_column:
@@ -86,6 +93,8 @@ def main():
             if st.session_state.current_row >= len(st.session_state.dataframe):
                 st.session_state.current_row = 0  # Loop back to the first row
                 st.info("Reached the end of the dataset. Looping back to the first row.")
+            # Force a rerun to reset the comment field for the new row
+            st.experimental_rerun()
 
     # Add a button to show the full DataFrame
     if st.button("Show Full Dataset"):
