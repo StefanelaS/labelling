@@ -8,7 +8,6 @@ Created on Wed Feb 12 14:02:22 2025
 import pandas as pd
 import numpy as np
 import streamlit as st
-import matplotlib.pyplot as plt
 
 # Set pandas to display full text in columns
 pd.set_option('display.max_colwidth', None)
