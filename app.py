@@ -60,7 +60,7 @@ def main():
     # Input for user to add or edit a comment
     comment = st.text_area(
         "Add or edit a comment (or leave blank to skip):",
-        value=existing_comment if pd.notna(existing_comment) else ""
+        value="" if pd.notna(existing_comment) else ""
     )
 
     # Create two layout columns for the buttons
