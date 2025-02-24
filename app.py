@@ -70,6 +70,12 @@ def main():
             else:
                 st.warning("No comment provided. Skipping save.")
 
+            # Move to the next row automatically after saving
+            st.session_state.current_row += 1
+            if st.session_state.current_row >= len(st.session_state.dataframe):
+                st.session_state.current_row = 0  # Loop back to the first row
+                st.info("Reached the end of the dataset. Looping back to the first row.")
+
     with col2:
         if st.button("Skip to Next Row"):
             st.session_state.current_row += 1
