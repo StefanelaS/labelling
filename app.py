@@ -26,77 +26,58 @@ def update_dataset(file_path, df):
     """Save the updated DataFrame to the given file path."""
     df.to_excel(file_path, index=False)
 
-def display_current_row(df, current_row):
-    """Display the premise and hypothesis for the current row."""
-    st.write(f"**Premise:** {df.loc[current_row, 'premise']}")
-    st.write(f"**Hypothesis:** {df.loc[current_row, 'hypothesis']}")
-    st.write(f"**Comment:** {df.loc[current_row, 'comm1']}")
-
 def main():
     """Main function to run the Streamlit app."""
+    st.title("DataFrame Editor")
+
     # Dropdown to select the dataset type
     dataset_choice = st.selectbox(
         "Choose a dataset type:",
         ("Entailment", "Neutral", "Contradiction")
     )
 
-    # Initialize session state to keep track of the current row and DataFrame
+    # Load the dataset based on the user's choice
+    if 'dataframe' not in st.session_state or st.session_state.dataset_choice != dataset_choice:
+        st.session_state.dataset_choice = dataset_choice
+        st.session_state.dataframe = load_dataset(file_paths.get(dataset_choice))
+        st.session_state.current_row = 0  # Reset to the first row
+
+    # Initialize current_row if it doesn't exist
     if 'current_row' not in st.session_state:
         st.session_state.current_row = 0
-    if 'dataframe' not in st.session_state:
-        st.session_state.dataframe = None
-    if 'dataset_choice' not in st.session_state:
-        st.session_state.dataset_choice = dataset_choice
 
-    # Reload dataset if the dataset choice changes
-    if st.session_state.dataset_choice != dataset_choice:
-        st.session_state.dataset_choice = dataset_choice
-        st.session_state.current_row = 0  # Reset to the first row
-        st.session_state.dataframe = load_dataset(file_paths.get(dataset_choice))
-    elif st.session_state.dataframe is None:
-        st.session_state.dataframe = load_dataset(file_paths.get(dataset_choice))
-
-    # Display the current row's hypothesis and premise
-    display_current_row(st.session_state.dataframe, st.session_state.current_row)
-
-    # Check if a comment already exists for the current row
+    # Display the current row's premise, hypothesis, and comment
+    st.write(f"**Premise:** {st.session_state.dataframe.loc[st.session_state.current_row, 'premise']}")
+    st.write(f"**Hypothesis:** {st.session_state.dataframe.loc[st.session_state.current_row, 'hypothesis']}")
     existing_comment = st.session_state.dataframe.loc[st.session_state.current_row, 'comm1']
+    st.write(f"**Current Comment:** {existing_comment if pd.notna(existing_comment) else 'No comment yet.'}")
 
     # Input for user to add or edit a comment
-    comment = st.text_area(
+    new_comment = st.text_area(
         "Add or edit a comment (or leave blank to skip):",
         value=existing_comment if pd.notna(existing_comment) else ""
     )
 
-    # Create two layout columns for the buttons
-    save_column, skip_column = st.columns(2)
+    # Buttons for saving or skipping
+    col1, col2 = st.columns(2)
 
-    # Button to save the comment
-    with save_column:
+    with col1:
         if st.button("Save Comment"):
-            if comment:
-                st.session_state.dataframe.loc[st.session_state.current_row, 'comm1'] = comment
-                # Save the updated DataFrame to the file
+            if new_comment:
+                st.session_state.dataframe.loc[st.session_state.current_row, 'comm1'] = new_comment
                 update_dataset(file_paths.get(dataset_choice), st.session_state.dataframe)
-            # Move to the next row
-            st.session_state.current_row += 1
-            if st.session_state.current_row >= len(st.session_state.dataframe):
-                st.session_state.current_row = 0  # Loop back to the first row
-                st.info("Reached the end of the dataset. Looping back to the first row.")
-            # Force a rerun to reset the comment field for the new row
-            st.experimental_rerun()
+                st.success("Comment saved!")
+            else:
+                st.warning("No comment provided. Skipping save.")
 
-    # Button to skip to the next row
-    with skip_column:
+    with col2:
         if st.button("Skip to Next Row"):
             st.session_state.current_row += 1
             if st.session_state.current_row >= len(st.session_state.dataframe):
                 st.session_state.current_row = 0  # Loop back to the first row
                 st.info("Reached the end of the dataset. Looping back to the first row.")
-            # Force a rerun to reset the comment field for the new row
-            st.experimental_rerun()
 
-    # Add a button to show the full DataFrame
+    # Display the full dataset if requested
     if st.button("Show Full Dataset"):
         st.dataframe(st.session_state.dataframe)
 
