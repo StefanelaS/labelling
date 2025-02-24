@@ -26,6 +26,14 @@ def update_dataset(file_path, df):
     """Save the updated DataFrame to the given file path."""
     df.to_excel(file_path, index=False)
 
+def find_first_empty_comm1(df):
+    """Find the index of the first row where 'comm1' is empty or NaN."""
+    empty_comm1_indices = df[df['comm1'].isna()].index
+    if len(empty_comm1_indices) > 0:
+        return empty_comm1_indices[0]  # Return the first empty row
+    else:
+        return 0  # If no empty rows, start from the beginning
+
 def main():
     """Main function to run the Streamlit app."""
     st.title("DataFrame Editor")
@@ -40,11 +48,12 @@ def main():
     if 'dataframe' not in st.session_state or st.session_state.dataset_choice != dataset_choice:
         st.session_state.dataset_choice = dataset_choice
         st.session_state.dataframe = load_dataset(file_paths.get(dataset_choice))
-        st.session_state.current_row = 0  # Reset to the first row
+        # Find the first row with an empty 'comm1' field
+        st.session_state.current_row = find_first_empty_comm1(st.session_state.dataframe)
 
     # Initialize current_row if it doesn't exist
     if 'current_row' not in st.session_state:
-        st.session_state.current_row = 0
+        st.session_state.current_row = find_first_empty_comm1(st.session_state.dataframe)
 
     # Display the current row's premise, hypothesis, and comment
     st.write(f"**Premise:** {st.session_state.dataframe.loc[st.session_state.current_row, 'premise']}")
@@ -70,18 +79,22 @@ def main():
             else:
                 st.warning("No comment provided. Skipping save.")
 
-            # Move to the next row automatically after saving
-            st.session_state.current_row += 1
-            if st.session_state.current_row >= len(st.session_state.dataframe):
-                st.session_state.current_row = 0  # Loop back to the first row
-                st.info("Reached the end of the dataset. Looping back to the first row.")
+            # Move to the next row with an empty 'comm1' field
+            remaining_empty_rows = st.session_state.dataframe[st.session_state.dataframe['comm1'].isna()].index
+            if len(remaining_empty_rows) > 0:
+                st.session_state.current_row = remaining_empty_rows[0]
+            else:
+                st.session_state.current_row = 0  # If no empty rows, loop back to the first row
+                st.info("All comments have been filled. Looping back to the first row.")
 
     with col2:
-        if st.button("Skip to Next Row"):
-            st.session_state.current_row += 1
-            if st.session_state.current_row >= len(st.session_state.dataframe):
-                st.session_state.current_row = 0  # Loop back to the first row
-                st.info("Reached the end of the dataset. Looping back to the first row.")
+        if st.button("Skip to Next Empty Row"):
+            remaining_empty_rows = st.session_state.dataframe[st.session_state.dataframe['comm1'].isna()].index
+            if len(remaining_empty_rows) > 0:
+                st.session_state.current_row = remaining_empty_rows[0]
+            else:
+                st.session_state.current_row = 0  # If no empty rows, loop back to the first row
+                st.info("All comments have been filled. Looping back to the first row.")
 
     # Display the full dataset if requested
     if st.button("Show Full Dataset"):
