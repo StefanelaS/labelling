@@ -84,7 +84,7 @@ def main():
         value=existing_comment if pd.notna(existing_comment) else ""
     )
 
-     new_comment2 = st.text_area(
+    new_comment2 = st.text_area(
         "Insert a label for the sentence pair in English:",
         value=existing_comment if pd.notna(existing_comment) else ""
     )
