@@ -58,7 +58,7 @@ def main():
         "Choose a dataset type:",
         ("Entailment", "Neutral", "Contradiction")
     )
-
+    
     # Load the dataset based on the user's choice
     if 'dataframe' not in st.session_state or st.session_state.dataset_choice != dataset_choice:
         st.session_state.dataset_choice = dataset_choice
@@ -81,12 +81,14 @@ def main():
     # Input for user to add or edit a comment
     new_comment = st.text_area(
         "Insert a label for the sentence pair in Slovene:",
-        value=""
+        value="",
+        key=f"comment_box_{st.session_state.current_row}"
     )
 
     new_comment2 = st.text_area(
         "Insert a label for the sentence pair in English:",
-        value=""
+        value="",
+        key=f"comment_box_{st.session_state.current_row}"
     )
     
     # Buttons for saving or skipping
@@ -101,7 +103,6 @@ def main():
                 st.success("Comment saved!")
             else:
                 st.warning("No comment provided. Skipping save.")
-            st.experimental_rerun()
 
             # Move to the next row with an empty 'comm1' field
             remaining_empty_rows = st.session_state.dataframe[st.session_state.dataframe['comm1'].isna()].index
