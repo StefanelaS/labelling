@@ -19,13 +19,27 @@ file_paths = {
     "Neutral": "dev_n.xlsx"             
 }
 
+# Define file paths for each dataset
+file_paths_train = {
+    "Contradiction": "contradiction_train_100_samples.tsv",  
+    "Entailment": "entailment_train_100_samples.tsv",       
+    "Neutral": "neutral_train_100_samples.tsv"             
+}
+
+# Define file paths for each dataset
+file_paths_val = {
+    "Contradiction": "contradiction_train_100_samples.tsv",  
+    "Entailment": "entailment_train_100_samples.tsv",       
+    "Neutral": "neutral_train_100_samples.tsv"             
+}
+
 def load_dataset(file_path):
     """Load the dataset from the given file path."""
-    return pd.read_excel(file_path)
+    return df = pd.read_csv(file_path, sep='\t')
 
 def update_dataset(file_path, df):
     """Save the updated DataFrame to the given file path."""
-    df.to_excel(file_path, index=False)
+    df.to_csv(file_path, sep='\t', index=False)
 
 def find_first_empty_comm1(df):
     """Find the index of the first row where 'comm1' is empty or NaN."""
