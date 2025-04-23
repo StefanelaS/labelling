@@ -69,8 +69,10 @@ def main():
         st.session_state.current_row = find_first_empty_comm1(st.session_state.dataframe)
 
     # Display the current row's premise, hypothesis, and comment
-    st.write(f"**Premise:** {st.session_state.dataframe.loc[st.session_state.current_row, 'premise']}")
-    st.write(f"**Hypothesis:** {st.session_state.dataframe.loc[st.session_state.current_row, 'hypothesis']}")
+    st.write(f"**Premise:** {st.session_state.dataframe.loc[st.session_state.current_row, 'premise_slo']}")
+    st.write(f"**Hypothesis:** {st.session_state.dataframe.loc[st.session_state.current_row, 'hypothesis_slo']}")
+    st.write(f"**Premise EN:** {st.session_state.dataframe.loc[st.session_state.current_row, 'premise_eng']}")
+    st.write(f"**Hypothesis EN:** {st.session_state.dataframe.loc[st.session_state.current_row, 'hypothesis_eng']}")
     existing_comment = st.session_state.dataframe.loc[st.session_state.current_row, 'comm1']
     st.write(f"**Current Comment:** {existing_comment if pd.notna(existing_comment) else 'No comment yet.'}")
 
