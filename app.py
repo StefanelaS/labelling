@@ -35,7 +35,7 @@ file_paths_val = {
 
 def load_dataset(file_path):
     """Load the dataset from the given file path."""
-    return df = pd.read_csv(file_path, sep='\t')
+    return pd.read_csv(file_path, sep='\t')
 
 def update_dataset(file_path, df):
     """Save the updated DataFrame to the given file path."""
