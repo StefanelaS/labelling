@@ -81,12 +81,12 @@ def main():
     # Input for user to add or edit a comment
     new_comment = st.text_area(
         "Insert a label for the sentence pair in Slovene:",
-        value=existing_comment if pd.notna(existing_comment) else ""
+        value=""
     )
 
     new_comment2 = st.text_area(
         "Insert a label for the sentence pair in English:",
-        value=existing_comment if pd.notna(existing_comment) else ""
+        value=""
     )
     
     # Buttons for saving or skipping
