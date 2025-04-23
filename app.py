@@ -30,7 +30,10 @@ file_paths = file_paths_train
 
 def load_dataset(file_path):
     """Load the dataset from the given file path."""
-    return pd.read_csv(file_path, sep='\t')
+    df = pd.read_csv(file_path, sep='\t')
+    if 'comm1' not in df.columns:
+        df['comm1'] = None
+    return df
 
 def update_dataset(file_path, df):
     """Save the updated DataFrame to the given file path."""
