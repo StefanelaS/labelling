@@ -70,6 +70,9 @@ def main():
     if 'current_row' not in st.session_state:
         st.session_state.current_row = find_first_empty_comm1(st.session_state.dataframe)
 
+    if 'clear_text' not in st.session_state:
+        st.session_state.clear_text = False
+
     # Display the current row's premise, hypothesis, and comment
     st.write(f"**Premise:** {st.session_state.dataframe.loc[st.session_state.current_row, 'premise_slo']}")
     st.write(f"**Hypothesis:** {st.session_state.dataframe.loc[st.session_state.current_row, 'hypothesis_slo']}")
@@ -81,15 +84,16 @@ def main():
     # Input for user to add or edit a comment
     new_comment = st.text_area(
         "Insert a label for the sentence pair in Slovene:",
-        value="",
-        key=f"comment_box_{st.session_state.current_row}"
+        value="" if st.session_state.get('clear_text', False) else ""
     )
 
     new_comment2 = st.text_area(
         "Insert a label for the sentence pair in English:",
-        value="",
-        key=f"comment_box_{st.session_state.current_row}"
+        value="" if st.session_state.get('clear_text', False) else ""
     )
+
+    if 'clear_text' in st.session_state and st.session_state.clear_text:
+        st.session_state.clear_text = False
     
     # Buttons for saving or skipping
     col1, col2 = st.columns(2)
@@ -103,6 +107,7 @@ def main():
                 st.success("Comment saved!")
             else:
                 st.warning("No comment provided. Skipping save.")
+            st.session_state.clear_text = True
 
             # Move to the next row with an empty 'comm1' field
             remaining_empty_rows = st.session_state.dataframe[st.session_state.dataframe['comm1'].isna()].index
