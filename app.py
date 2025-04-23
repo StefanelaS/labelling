@@ -13,13 +13,6 @@ import streamlit as st
 pd.set_option('display.max_colwidth', None)
 
 # Define file paths for each dataset
-file_paths = {
-    "Contradiction": "dev_c.xlsx",  
-    "Entailment": "dev_e.xlsx",       
-    "Neutral": "dev_n.xlsx"             
-}
-
-# Define file paths for each dataset
 file_paths_train = {
     "Contradiction": "contradiction_train_100_samples.tsv",  
     "Entailment": "entailment_train_100_samples.tsv",       
@@ -32,6 +25,8 @@ file_paths_val = {
     "Entailment": "entailment_train_100_samples.tsv",       
     "Neutral": "neutral_train_100_samples.tsv"             
 }
+
+file_paths = file_paths_train
 
 def load_dataset(file_path):
     """Load the dataset from the given file path."""
