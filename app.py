@@ -33,6 +33,8 @@ def load_dataset(file_path):
     df = pd.read_csv(file_path, sep='\t')
     if 'comm1' not in df.columns:
         df['comm1'] = None
+    if 'comm2' not in df.columns:
+        df['comm2'] = None
     return df
 
 def update_dataset(file_path, df):
@@ -74,14 +76,19 @@ def main():
     st.write(f"**Premise EN:** {st.session_state.dataframe.loc[st.session_state.current_row, 'premise_eng']}")
     st.write(f"**Hypothesis EN:** {st.session_state.dataframe.loc[st.session_state.current_row, 'hypothesis_eng']}")
     existing_comment = st.session_state.dataframe.loc[st.session_state.current_row, 'comm1']
-    st.write(f"**Current Comment:** {existing_comment if pd.notna(existing_comment) else 'No comment yet.'}")
+    #st.write(f"**Current Comment:** {existing_comment if pd.notna(existing_comment) else 'No comment yet.'}")
 
     # Input for user to add or edit a comment
     new_comment = st.text_area(
-        "Add or edit a comment (or leave blank to skip):",
+        "Insert a label for the sentence pair in Slovene:",
         value=existing_comment if pd.notna(existing_comment) else ""
     )
 
+     new_comment2 = st.text_area(
+        "Insert a label for the sentence pair in English:",
+        value=existing_comment if pd.notna(existing_comment) else ""
+    )
+    
     # Buttons for saving or skipping
     col1, col2 = st.columns(2)
 
@@ -89,6 +96,7 @@ def main():
         if st.button("Save Comment"):
             if new_comment:
                 st.session_state.dataframe.loc[st.session_state.current_row, 'comm1'] = new_comment
+                st.session_state.dataframe.loc[st.session_state.current_row, 'comm2'] = new_comment2
                 update_dataset(file_paths.get(dataset_choice), st.session_state.dataframe)
                 st.success("Comment saved!")
             else:
