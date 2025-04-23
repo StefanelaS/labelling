@@ -101,6 +101,7 @@ def main():
                 st.success("Comment saved!")
             else:
                 st.warning("No comment provided. Skipping save.")
+            st.experimental_rerun()
 
             # Move to the next row with an empty 'comm1' field
             remaining_empty_rows = st.session_state.dataframe[st.session_state.dataframe['comm1'].isna()].index
