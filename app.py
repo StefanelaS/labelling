@@ -26,7 +26,7 @@ file_paths_val = {
     "Neutral": "neutral_train_100_samples.tsv"             
 }
 
-file_paths = file_paths_train
+file_paths = file_paths_val
 
 def load_dataset(file_path):
     """Load the dataset from the given file path."""
