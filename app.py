@@ -21,9 +21,9 @@ file_paths_train = {
 
 # Define file paths for each dataset
 file_paths_val = {
-    "Contradiction": "contradiction_train_100_samples.tsv",  
-    "Entailment": "entailment_train_100_samples.tsv",       
-    "Neutral": "neutral_train_100_samples.tsv"             
+    "Contradiction": "contradiction_val_50_samples.tsv",  
+    "Entailment": "entailment_val_50_samples.tsv",       
+    "Neutral": "neutral_val_50_samples.tsv"             
 }
 
 file_paths = file_paths_val
